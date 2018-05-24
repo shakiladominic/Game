@@ -42,7 +42,7 @@ class DFRunner(val spark: SparkSession) {
       val Scorescasted = ScoresRenamed.selectExpr("cast(Points as Float) as Points","Player","Day")
       val Scoresagg = Scorescasted.groupBy("Player").sum("Points")
 
-      val Top_player = (Scoresagg.sort(desc("sum(Points")).limit(1))
+      val Top_player = (Scoresagg.sort(desc("sum(Points)")).limit(1))
     
       /* Below code creates column names for Dataframes to avoid ambiguity, join teamsdataframe with previous dataframe, aggregate 
          points by Team and find the top team.
@@ -52,10 +52,10 @@ class DFRunner(val spark: SparkSession) {
       val TeamsSchema = Seq("Player", "Team")
       val TeamsRenamed = teamsdf.toDF(TeamsSchema: _*)
       val Teamsjoined = Scorescasted.join(TeamsRenamed,"Player")
-      Teamsjoined.show()
+    
    
       val Teamsagg = Teamsjoined.groupBy("Team").sum("Points")
-      Teamsagg.show()
+      
       val Top_team =  (Teamsagg.sort(desc("sum(Points)")).limit(1))
     
       /* Join both the dataframes to return a single dataframe to next function(load) */
